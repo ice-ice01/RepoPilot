@@ -1,0 +1,241 @@
+{
+  "created_at": "2026-10-20T15:17:21.527787+00:00",
+  "model": "gpt-6.1-sol",
+  "case_count": 1,
+  "repeats": 1,
+  "concurrency": 1,
+  "live": true,
+  "prompt_sha256": "f579238406bef80fe959839bc0f605528da770000d5721e3e633c314dceb9ce7",
+  "dataset_sha256": "ce7638b041813a2ff14f2671cb7c8ca120e6ca83308bf0d2cfdbfe6d25d4cbec",
+  "scope": "Initial agent selection and task-graph validity only; no specialists execute, no replan, no final-answer quality measurement.",
+  "limitations": [
+    "Synthetic, author-labelled diagnostic dataset; not production traffic.",
+    "Expected labels frozen before live calls and hidden from the model.",
+    "Hard safety flags supplied by fixtures; upstream detection is not tested.",
+    "Mandatory baseline/safety/RAG gates can repair omissions; raw decisions and repairs retained.",
+    "No prompt tuning after seeing live labels; no model retry; failures count as rule fallback.",
+    "Latency includes HTTP setup/provider processing but excludes semaphore queue time.",
+    "Token usage reported by provider; no monetary estimate without a verified price.",
+    "Stability only meaningful with at least two repeats; sampling follows production API defaults."
+  ],
+  "summary": {
+    "rules": {
+      "runs": 1,
+      "exact_count": 1,
+      "exact_rate": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "extra_task_count": 0,
+      "missing_task_count": 0,
+      "valid_plan_rate": 1.0,
+      "safety_gate_rate": 1.0,
+      "median_latency_ms": 1.3544000103138387,
+      "p95_latency_ms": 1.3544000103138387,
+      "fallback_count": 0
+    },
+    "hybrid": {
+      "runs": 1,
+      "exact_count": 1,
+      "exact_rate": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "extra_task_count": 0,
+      "missing_task_count": 0,
+      "valid_plan_rate": 1.0,
+      "safety_gate_rate": 1.0,
+      "median_latency_ms": 21774.768899951596,
+      "p95_latency_ms": 21774.768899951596,
+      "fallback_count": 0
+    }
+  },
+  "hybrid_llm_success_only": {
+    "runs": 1,
+    "exact_count": 1,
+    "exact_rate": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "extra_task_count": 0,
+    "missing_task_count": 0,
+    "valid_plan_rate": 1.0,
+    "safety_gate_rate": 1.0,
+    "median_latency_ms": 21774.768899951596,
+    "p95_latency_ms": 21774.768899951596,
+    "fallback_count": 0
+  },
+  "hybrid_stable_case_count": 1,
+  "rows": [
+    {
+      "strategy": "rules",
+      "case_id": "E1",
+      "category": "明确指令",
+      "repeat": 1,
+      "message": "分析 Issue #142 的优先级和负责人。",
+      "rationale": "明确工单分诊。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 1.3544000103138387,
+      "actual": [
+        "issue_analysis",
+        "repo_health"
+      ],
+      "expected": [
+        "issue_analysis",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "hybrid",
+      "case_id": "E1",
+      "category": "明确指令",
+      "repeat": 1,
+      "message": "分析 Issue #142 的优先级和负责人。",
+      "rationale": "明确工单分诊。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 21774.768899951596,
+      "usage": {
+        "prompt_tokens": 1459,
+        "completion_tokens": 334,
+        "total_tokens": 1793
+      },
+      "spec": {
+        "workflow_id": "workflow_d3ae17d5465e",
+        "goal": "分析 Issue #142 的优先级和负责人。",
+        "trigger_message": "分析 Issue #142 的优先级和负责人。",
+        "acceptance_criteria": [
+          "所有被选中的 Agent 都必须停留在声明的 claim 范围内。",
+          "每个专用结果都应包含证据、置信度，或在证据不足时说明明确原因。",
+          "Observer 必须在最终综合前标出跨 Agent 冲突。",
+          "最终综合必须保留 What、Why、Tradeoff、Open Questions、Next Action。",
+          "PR 审查必须按 P1/P2/P3 分级；P1/P2 未解决前不能建议直接合入。",
+          "外部写操作必须返回草稿，并要求人工确认。"
+        ],
+        "tasks": [
+          {
+            "id": "repo_health",
+            "agent_name": "repo_health_agent",
+            "task_type": "repo_health",
+            "objective": "检查仓库基线与健康状态，为 Issue #142 的分诊提供项目背景。",
+            "dependencies": [],
+            "claim": {
+              "target_type": "repository",
+              "target_id": "synthetic-repo",
+              "allowed_sources": [
+                "issues",
+                "pull_requests",
+                "workflow_runs"
+              ],
+              "write_intent": false,
+              "reason": "用户明确要求分析 Issue #142 的优先级和负责人；仓库存在，因此先获取仓库基线。PR 和 CI 虽然存在，但本次请求未要求审查改动或诊断检查结果。"
+            },
+            "input_hint": {},
+            "critical": false
+          },
+          {
+            "id": "issue_analysis",
+            "agent_name": "issue_analyst_agent",
+            "task_type": "issue_analysis",
+            "objective": "分析 Issue #142 的优先级、影响范围，并提出合适的负责人。",
+            "dependencies": [
+              "repo_health"
+            ],
+            "claim": {
+              "target_type": "issue",
+              "target_id": "synthetic-issue",
+              "allowed_sources": [
+                "issue",
+                "similar_issues",
+                "code",
+                "documents",
+                "team_members"
+              ],
+              "write_intent": false,
+              "reason": "用户明确要求分析 Issue #142 的优先级和负责人；仓库存在，因此先获取仓库基线。PR 和 CI 虽然存在，但本次请求未要求审查改动或诊断检查结果。"
+            },
+            "input_hint": {
+              "issue_number": 142
+            },
+            "critical": false
+          }
+        ],
+        "max_parallel_tasks": 3,
+        "requires_human_confirmation": false,
+        "created_at": "2026-10-20T15:16:59.749931Z"
+      },
+      "mode": "llm",
+      "guarded_tasks": [],
+      "raw_decision": {
+        "tasks": [
+          {
+            "task_type": "repo_health",
+            "objective": "检查仓库基线与健康状态，为 Issue #142 的分诊提供项目背景。",
+            "dependencies": []
+          },
+          {
+            "task_type": "issue_analysis",
+            "objective": "分析 Issue #142 的优先级、影响范围，并提出合适的负责人。",
+            "dependencies": [
+              "repo_health"
+            ]
+          }
+        ],
+        "reason": "用户明确要求分析 Issue #142 的优先级和负责人；仓库存在，因此先获取仓库基线。PR 和 CI 虽然存在，但本次请求未要求审查改动或诊断检查结果。"
+      },
+      "actual": [
+        "issue_analysis",
+        "repo_health"
+      ],
+      "expected": [
+        "issue_analysis",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    }
+  ]
+}

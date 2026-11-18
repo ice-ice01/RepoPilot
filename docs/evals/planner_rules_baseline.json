@@ -1,0 +1,1451 @@
+{
+  "created_at": "2026-10-20T15:16:15.198688+00:00",
+  "model": null,
+  "case_count": 32,
+  "repeats": 1,
+  "concurrency": 3,
+  "live": false,
+  "prompt_sha256": "f579238406bef80fe959839bc0f605528da770000d5721e3e633c314dceb9ce7",
+  "dataset_sha256": "066762d91e5771954e122d4b9a42fecd769816db754f62c84831424e02d484d1",
+  "scope": "Initial agent selection and task-graph validity only; no specialists execute, no replan, no final-answer quality measurement.",
+  "limitations": [
+    "Synthetic, author-labelled diagnostic dataset; not production traffic.",
+    "Expected labels frozen before live calls and hidden from the model.",
+    "Hard safety flags supplied by fixtures; upstream detection is not tested.",
+    "Mandatory baseline/safety/RAG gates can repair omissions; raw decisions and repairs retained.",
+    "No prompt tuning after seeing live labels; no model retry; failures count as rule fallback.",
+    "Latency includes HTTP setup/provider processing but excludes semaphore queue time.",
+    "Token usage reported by provider; no monetary estimate without a verified price.",
+    "Stability only meaningful with at least two repeats; sampling follows production API defaults."
+  ],
+  "summary": {
+    "rules": {
+      "runs": 32,
+      "exact_count": 15,
+      "exact_rate": 0.46875,
+      "precision": 0.5967741935483871,
+      "recall": 0.8604651162790697,
+      "f1": 0.7047619047619048,
+      "extra_task_count": 25,
+      "missing_task_count": 6,
+      "valid_plan_rate": 1.0,
+      "safety_gate_rate": 1.0,
+      "median_latency_ms": 0.03825000021606684,
+      "p95_latency_ms": 0.16430002870038152,
+      "fallback_count": 0
+    },
+    "hybrid": {
+      "runs": 0
+    }
+  },
+  "hybrid_llm_success_only": {
+    "runs": 0
+  },
+  "hybrid_stable_case_count": 0,
+  "rows": [
+    {
+      "strategy": "rules",
+      "case_id": "E1",
+      "category": "明确指令",
+      "repeat": 1,
+      "message": "分析 Issue #142 的优先级和负责人。",
+      "rationale": "明确工单分诊。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.1742999884299934,
+      "actual": [
+        "issue_analysis",
+        "repo_health"
+      ],
+      "expected": [
+        "issue_analysis",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "E2",
+      "category": "明确指令",
+      "repeat": 1,
+      "message": "请 review PR #86 的 diff。",
+      "rationale": "仅请求代码审查，不含就绪度判定。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.05740002961829305,
+      "actual": [
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "pr_review",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "E3",
+      "category": "明确指令",
+      "repeat": 1,
+      "message": "定位 CI #9001 的构建失败原因。",
+      "rationale": "仅请求运行诊断。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03940000897273421,
+      "actual": [
+        "ci_debug",
+        "repo_health"
+      ],
+      "expected": [
+        "ci_debug",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "E4",
+      "category": "明确指令",
+      "repeat": 1,
+      "message": "检索知识库中的历史处理记录。",
+      "rationale": "仅请求知识检索。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03170000854879618,
+      "actual": [
+        "rag_search",
+        "repo_health"
+      ],
+      "expected": [
+        "rag_search",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "S1",
+      "category": "同义表达",
+      "repeat": 1,
+      "message": "帮我看看这次提交的改动有没有引入隐患。",
+      "rationale": "改动审查的隐含表达。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.04929996794089675,
+      "actual": [
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "pr_review",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "S2",
+      "category": "同义表达",
+      "repeat": 1,
+      "message": "自动检查一直亮红灯，帮我找出原因。",
+      "rationale": "自动检查失败的隐含表达。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03309996100142598,
+      "actual": [
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "ci_debug",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [
+        "ci_debug"
+      ],
+      "extra": [
+        "pr_review"
+      ],
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "S3",
+      "category": "同义表达",
+      "repeat": 1,
+      "message": "这张工单该交给谁跟进？",
+      "rationale": "负责人分派的同义表达。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.029799994081258774,
+      "actual": [
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "issue_analysis",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [
+        "issue_analysis"
+      ],
+      "extra": [
+        "pr_review"
+      ],
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "S4",
+      "category": "同义表达",
+      "repeat": 1,
+      "message": "以前有没有遇到过这种现象，当时是怎么解决的？",
+      "rationale": "历史检索的同义表达。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.028099981136620045,
+      "actual": [
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "rag_search",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [
+        "rag_search"
+      ],
+      "extra": [
+        "pr_review"
+      ],
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "N1",
+      "category": "否定与限定",
+      "repeat": 1,
+      "message": "只审查 PR，不要分析 Issue、CI，也不要查历史。",
+      "rationale": "被否定的领域不得选入。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.16430002870038152,
+      "actual": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "rag_search",
+        "repo_health"
+      ],
+      "expected": [
+        "pr_review",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "ci_debug",
+        "issue_analysis",
+        "rag_search"
+      ],
+      "tp": 1,
+      "fp": 3,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "N2",
+      "category": "否定与限定",
+      "repeat": 1,
+      "message": "只分析 CI 日志，不审查 PR，也不处理 Issue。",
+      "rationale": "限定运行诊断。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.06220000796020031,
+      "actual": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "ci_debug",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "issue_analysis",
+        "pr_review"
+      ],
+      "tp": 1,
+      "fp": 2,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "N3",
+      "category": "否定与限定",
+      "repeat": 1,
+      "message": "只查历史案例，不做 Issue、PR 或 CI 分析。",
+      "rationale": "限定知识检索。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.052099989261478186,
+      "actual": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "rag_search",
+        "repo_health"
+      ],
+      "expected": [
+        "rag_search",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review"
+      ],
+      "tp": 1,
+      "fp": 3,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "N4",
+      "category": "否定与限定",
+      "repeat": 1,
+      "message": "只分析 Issue 的负责人，不要审查 PR 或检查 CI。",
+      "rationale": "限定工单分诊。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.043199979700148106,
+      "actual": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "issue_analysis",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "ci_debug",
+        "pr_review"
+      ],
+      "tp": 1,
+      "fp": 2,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "M1",
+      "category": "多目标",
+      "repeat": 1,
+      "message": "这个改动现在能上线吗？请核查改动和自动检查结果。",
+      "rationale": "上线就绪度需要改动和运行证据，不默认分诊工单。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03029999788850546,
+      "actual": [
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "ci_debug",
+        "pr_review",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [
+        "ci_debug"
+      ],
+      "extra": [],
+      "tp": 1,
+      "fp": 0,
+      "fn": 1,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "M2",
+      "category": "多目标",
+      "repeat": 1,
+      "message": "分析 Issue #142，并查找历史解决方案。",
+      "rationale": "分诊与历史检索。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03459997242316604,
+      "actual": [
+        "issue_analysis",
+        "rag_search",
+        "repo_health"
+      ],
+      "expected": [
+        "issue_analysis",
+        "rag_search",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 2,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "M3",
+      "category": "多目标",
+      "repeat": 1,
+      "message": "审查 PR #86，并检索相似修改的处理记录。",
+      "rationale": "代码审查与相似案例。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03489997470751405,
+      "actual": [
+        "pr_review",
+        "rag_search",
+        "repo_health"
+      ],
+      "expected": [
+        "pr_review",
+        "rag_search",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 2,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "M4",
+      "category": "多目标",
+      "repeat": 1,
+      "message": "定位 CI 失败并审查 PR 改动，不分析 Issue。",
+      "rationale": "两个肯定目标，一个否定目标。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.041199964471161366,
+      "actual": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "ci_debug",
+        "pr_review",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "issue_analysis"
+      ],
+      "tp": 2,
+      "fp": 1,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "A1",
+      "category": "缺少目标",
+      "repeat": 1,
+      "message": "请 review PR 的 diff。",
+      "rationale": "没有 PR 时不得改选无关的 CI 或 Issue。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": false,
+        "pr_id": null,
+        "pr_number": null,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.0315000070258975,
+      "actual": [
+        "ci_debug",
+        "repo_health"
+      ],
+      "expected": [
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "ci_debug"
+      ],
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "A2",
+      "category": "缺少目标",
+      "repeat": 1,
+      "message": "请定位 CI 构建失败原因。",
+      "rationale": "没有运行时不得改选无关 PR。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": false,
+        "has_failed_ci": false,
+        "workflow_run_id": null,
+        "workflow_run_number": null,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.026800029445439577,
+      "actual": [
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "pr_review"
+      ],
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "A3",
+      "category": "缺少目标",
+      "repeat": 1,
+      "message": "分析 Issue 的优先级。",
+      "rationale": "没有工单时不得改选无关 PR。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": false,
+        "issue_id": null,
+        "issue_number": null,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.027099973522126675,
+      "actual": [
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "pr_review"
+      ],
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "A4",
+      "category": "缺少目标",
+      "repeat": 1,
+      "message": "全面评估当前仓库工程状态。",
+      "rationale": "没有任何工程对象时仅做仓库基线。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": false,
+        "issue_id": null,
+        "issue_number": 142,
+        "has_pr": false,
+        "pr_id": null,
+        "pr_number": 86,
+        "has_ci_run": false,
+        "has_failed_ci": false,
+        "workflow_run_id": null,
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.018599967006593943,
+      "actual": [
+        "repo_health"
+      ],
+      "expected": [
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "B1",
+      "category": "全局评估",
+      "repeat": 1,
+      "message": "全面评估当前仓库工程状态，覆盖工单、代码改动和自动检查。",
+      "rationale": "明确覆盖全部工程对象。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03950000973418355,
+      "actual": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "B2",
+      "category": "全局评估",
+      "repeat": 1,
+      "message": "请多 Agent 协作，检查 Issue、PR 和 CI。",
+      "rationale": "明确三领域协作。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03959995228797197,
+      "actual": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "B3",
+      "category": "全局评估",
+      "repeat": 1,
+      "message": "从整体识别仓库阻塞，分析工单、代码改动和自动检查。",
+      "rationale": "全局阻塞评估。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.039000005926936865,
+      "actual": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "repo_health"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "B4",
+      "category": "全局评估",
+      "repeat": 1,
+      "message": "把所有工单、待审查的改动、自动检查运行一起评估一下。",
+      "rationale": "不依赖固定全局关键词的三领域表达。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.02789997961372137,
+      "actual": [
+        "pr_review",
+        "repo_health"
+      ],
+      "expected": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [
+        "ci_debug",
+        "issue_analysis"
+      ],
+      "extra": [],
+      "tp": 1,
+      "fp": 0,
+      "fn": 2,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "K1",
+      "category": "边界与误触发",
+      "repeat": 1,
+      "message": "只给仓库健康概览，不展开 Issue、PR、CI 或历史分析。",
+      "rationale": "仓库概览不应强制兜底专用分析。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.045900000259280205,
+      "actual": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "rag_search",
+        "repo_health"
+      ],
+      "expected": [
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "ci_debug",
+        "issue_analysis",
+        "pr_review",
+        "rag_search"
+      ],
+      "tp": 0,
+      "fp": 4,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "K2",
+      "category": "边界与误触发",
+      "repeat": 1,
+      "message": "只在知识库查 pricing 文档，不分析工程对象。",
+      "rationale": "pricing 中的 pr/ci 不是工程对象。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.04090002039447427,
+      "actual": [
+        "ci_debug",
+        "pr_review",
+        "rag_search",
+        "repo_health"
+      ],
+      "expected": [
+        "rag_search",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "ci_debug",
+        "pr_review"
+      ],
+      "tp": 1,
+      "fp": 2,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "K3",
+      "category": "边界与误触发",
+      "repeat": 1,
+      "message": "解释 action 这个术语，只查知识库，不分析工程对象。",
+      "rationale": "action 只是术语，不是运行诊断意图。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03419996937736869,
+      "actual": [
+        "ci_debug",
+        "rag_search",
+        "repo_health"
+      ],
+      "expected": [
+        "rag_search",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "ci_debug"
+      ],
+      "tp": 1,
+      "fp": 1,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "K4",
+      "category": "边界与误触发",
+      "repeat": 1,
+      "message": "说明 priority 字段含义，只检索知识库，不分析工程对象。",
+      "rationale": "priority 中的 pr 不是审查意图。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": false,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.11199997970834374,
+      "actual": [
+        "pr_review",
+        "rag_search",
+        "repo_health"
+      ],
+      "expected": [
+        "rag_search",
+        "repo_health"
+      ],
+      "exact": false,
+      "missing": [],
+      "extra": [
+        "pr_review"
+      ],
+      "tp": 1,
+      "fp": 1,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "W1",
+      "category": "安全门",
+      "repeat": 1,
+      "message": "审查 PR 和 CI，并生成合并操作草稿，等待我确认。",
+      "rationale": "两项分析加外部操作安全门。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": true,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.05579995922744274,
+      "actual": [
+        "ci_debug",
+        "pr_review",
+        "repo_health",
+        "safety_review"
+      ],
+      "expected": [
+        "ci_debug",
+        "pr_review",
+        "repo_health",
+        "safety_review"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 3,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "W2",
+      "category": "安全门",
+      "repeat": 1,
+      "message": "请把通知发到群里，只生成发送草稿等我确认。",
+      "rationale": "仅发送草稿，不需要无关工程分析。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": true,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03749999450519681,
+      "actual": [
+        "repo_health",
+        "safety_review"
+      ],
+      "expected": [
+        "repo_health",
+        "safety_review"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "W3",
+      "category": "安全门",
+      "repeat": 1,
+      "message": "分析 Issue 后生成分配操作草稿，等待确认。",
+      "rationale": "工单分析加写入安全门。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": true,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03430002834647894,
+      "actual": [
+        "issue_analysis",
+        "repo_health",
+        "safety_review"
+      ],
+      "expected": [
+        "issue_analysis",
+        "repo_health",
+        "safety_review"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 2,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    },
+    {
+      "strategy": "rules",
+      "case_id": "W4",
+      "category": "安全门",
+      "repeat": 1,
+      "message": "检查 CI 后生成重新运行的操作草稿，等待确认。",
+      "rationale": "运行分析加写入安全门。",
+      "context": {
+        "repo_id": "synthetic-repo",
+        "has_repo": true,
+        "has_issue": true,
+        "issue_id": "synthetic-issue",
+        "issue_number": 142,
+        "has_pr": true,
+        "pr_id": "synthetic-pr",
+        "pr_number": 86,
+        "has_ci_run": true,
+        "has_failed_ci": true,
+        "workflow_run_id": "synthetic-run",
+        "workflow_run_number": 9001,
+        "requires_safety": true,
+        "enable_rag_task": false
+      },
+      "latency_ms": 0.03330002073198557,
+      "actual": [
+        "ci_debug",
+        "repo_health",
+        "safety_review"
+      ],
+      "expected": [
+        "ci_debug",
+        "repo_health",
+        "safety_review"
+      ],
+      "exact": true,
+      "missing": [],
+      "extra": [],
+      "tp": 2,
+      "fp": 0,
+      "fn": 0,
+      "valid_graph_and_availability": true,
+      "safety_gate_ok": true
+    }
+  ]
+}

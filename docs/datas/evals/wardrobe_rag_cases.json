@@ -1,0 +1,156 @@
+{
+  "schema_version": 3,
+  "name": "wardrobe-tool-calling-rag-baseline-v1",
+  "label": "wardrobeAgent：工具调用与穿搭生成固定基准",
+  "description": "依据已上传《AI-Agent-工具调用与穿搭生成流程.md》编写的14道技术问答；参考事实与任务验收分开，允许同义表达。仅适用于相应文档版本，须由维护者复核后用于正式发布。",
+  "repository_names": [
+    "ice-ice01/wardrobeAgent"
+  ],
+  "recommended": true,
+  "review_status": "source_checked_not_independently_human_reviewed",
+  "source_checksums": {
+    "AI-Agent-工具调用与穿搭生成流程.md": "1ab2a72fcde71f60e353aaa2988093e26634f9c7d7e10635454eef58ac54a7d5"
+  },
+  "cases": [
+    {
+      "id": "model-database-boundary",
+      "question": "根据 Tool Calling 技术说明，模型会直接查询衣橱数据库或保存穿搭方案吗？模型与后端分别负责什么？",
+      "reference": "模型不直接连接数据库或保存方案；后端查询当前用户衣橱、验证权限和硬规则并持久化。模型选择工具、提取场景和约束，并从候选衣物中做搭配判断。",
+      "reference_outcome": "解释模型与后端职责边界，明确模型不能直接访问数据库或写入方案；不得混淆软性搭配建议与后端硬规则。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "一、先记住核心结论",
+      "kind": "positive"
+    },
+    {
+      "id": "available-tools",
+      "question": "这份技术说明列出了哪些主要对话工具？各有什么用途？",
+      "reference": "主要工具是 generateOutfit(scene)，用于用户明确提出生成、推荐、调整穿搭或换一套时生成穿搭；getCurrentDateTime() 用于取得服务器当前时间。",
+      "reference_outcome": "列出两个文档明确提及的工具及用途；不把未列出的工具当作已确认实现。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "二、工具定义在哪里",
+      "kind": "positive"
+    },
+    {
+      "id": "tool-schema",
+      "question": "Spring AI 的工具名称、参数结构和描述来自哪里？工具 JSON 是开发者手写的吗？",
+      "reference": "工具在 WardrobeAgentTools.java 中定义；Spring AI 根据 Java 方法上的 @Tool 和参数上的 @ToolParam 生成工具描述及参数结构，并非手写这段 JSON。",
+      "reference_outcome": "说明 Java 方法和注解如何变成模型看到的工具 schema，不混淆参数描述与业务权限校验。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "二、工具定义在哪里",
+      "kind": "positive"
+    },
+    {
+      "id": "dynamic-scene",
+      "question": "generateOutfit 的 scene 是固定字符串吗？它依据哪些上下文产生？",
+      "reference": "scene 是动态的，由模型结合当前消息、会话历史、系统提示词、运行时 action 和工具描述整理；相同含义允许使用不同措辞。",
+      "reference_outcome": "明确 scene 动态生成，列明文档中的输入依据，允许同义表达，不声称后端要求固定措辞。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "三、`scene` 参数是不是动态的",
+      "kind": "positive"
+    },
+    {
+      "id": "tool-param-validation",
+      "question": "@ToolParam 会自动保证 scene 一定包含地点、温度或指定关键词吗？",
+      "reference": "不会。@ToolParam 提供参数名、类型和描述；它不会自动保证包含地点、温度或关键词，真正的业务判断由 AgentService 执行。",
+      "reference_outcome": "否定注解自动完成业务完整性校验的说法，并指出后端业务逻辑负责相应判断。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "三、`scene` 参数是不是动态的",
+      "kind": "positive"
+    },
+    {
+      "id": "request-vs-tool-args",
+      "question": "lockedItemIds、excludedItemIds、action 和 sourceOutfitId 来自前端还是模型的 ToolParam？它们分别表达什么？",
+      "reference": "它们来自前端请求而非 ToolParam；lockedItemIds 指必须保留的商品，excludedItemIds 指不能使用的商品，action=EXPLORE_MORE 表示换一套，sourceOutfitId 指该操作的来源方案。",
+      "reference_outcome": "区分前端请求字段与模型工具参数，并准确解释四个字段的用途。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "四、一次完整的 Tool Calling 流程",
+      "kind": "positive"
+    },
+    {
+      "id": "current-user-scope",
+      "question": "调用 generateOutfit(scene) 时，后端如何把模型提供的场景绑定到当前用户和会话？",
+      "reference": "AgentService.process 为每轮创建 WardrobeAgentTools，并通过 Lambda 把 scene 传给携带当前 userId、conversationId 和本轮 request 的后端 generateOutfit 业务逻辑。",
+      "reference_outcome": "说明每轮工具实例和服务端上下文绑定；不得声称模型通过 scene 自行指定其他用户或会话。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "四、一次完整的 Tool Calling 流程",
+      "kind": "positive"
+    },
+    {
+      "id": "explore-more-scene",
+      "question": "EXPLORE_MORE 换一套时采用哪个场景？为什么？",
+      "reference": "普通生成优先采用模型提供的 scene；EXPLORE_MORE 优先采用来源方案的原始场景，以保持换一套时上下文一致。",
+      "reference_outcome": "对比普通生成与换一套的场景来源，解释保持原始场景的目的。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "五、`generateOutfit` 工具内部如何取得衣服数据",
+      "kind": "positive"
+    },
+    {
+      "id": "candidate-constraints",
+      "question": "在调用搭配模型前，后端会对锁定、排除和衣物候选做哪些检查？",
+      "reference": "后端验证锁定商品属于当前用户、锁定和排除没有交集、锁定商品不存在 slot 冲突；排除商品不能进入候选。语义检索还过滤其他用户和已删除商品，并保留锁定商品与必要位置。",
+      "reference_outcome": "覆盖所有权、锁定与排除冲突、slot 冲突和候选过滤；不得把权限校验交给模型。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "五、`generateOutfit` 工具内部如何取得衣服数据",
+      "kind": "positive"
+    },
+    {
+      "id": "retrieval-vs-selection",
+      "question": "衣橱语义检索如何缩小候选范围？它是否直接决定最终穿搭？",
+      "reference": "语义检索根据场景查询向量计算衣物余弦相似度，按 slot 召回、使用 MMR 增加多样性，并保留锁定商品与必要位置；它缩小候选范围，不直接决定最终穿搭。",
+      "reference_outcome": "解释语义检索的主要步骤及其职责边界，不将召回结果等同最终方案。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "五、`generateOutfit` 工具内部如何取得衣服数据",
+      "kind": "positive"
+    },
+    {
+      "id": "multimodal-input",
+      "question": "搭配模型会收到哪些衣物文本和图片信息？图片传入前有什么控制？",
+      "reference": "候选文本包含 itemId、slot、名称、颜色、材质、场景标签、风格标签及锁定状态。WardrobeVisionService 对图片做所有权和路径校验、缩放、JPEG 压缩及数量尺寸限制，然后以多模态消息传给模型。",
+      "reference_outcome": "分别概括候选文本字段和受控图片处理，不把未经校验的任意图片路径直接发送给模型。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "六、搭配模型如何看到衣服数据",
+      "kind": "positive"
+    },
+    {
+      "id": "proposal-contract",
+      "question": "搭配模型返回完整商品对象吗？文档中 AiProposal 的字段是什么？",
+      "reference": "模型返回结构化 AiProposal，包含 title、selectedItemIds、reason；selectedItemIds 只能来自后端提供的候选 itemId，而不是完整商品对象或任意商品 ID。",
+      "reference_outcome": "说明返回结构及候选 ID 范围，区分模型建议和最终持久化。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "七、搭配模型返回什么",
+      "kind": "positive"
+    },
+    {
+      "id": "post-model-validation",
+      "question": "模型返回不存在的商品 ID、漏掉锁定衣物或产生槽位冲突时，后端如何处理？何时才创建最终方案？",
+      "reference": "normalizeSelection 对候选 ID 白名单、锁定商品、同 slot 重复、连衣裙与上下装冲突、必需位置和换一套组合重复进行校验；不存在的商品不能写入方案。通过校验后才创建 OutfitPlan、OutfitPlanItem 和 RecommendationRun。",
+      "reference_outcome": "解释模型结果必须通过后端二次校验，准确说明核心检查和持久化时机；不推测文档未描述的修复算法。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "八、Java 对模型结果做最终校验",
+      "kind": "positive"
+    },
+    {
+      "id": "unsupported-provider",
+      "question": "仅根据这份 Tool Calling 说明，能否确定生产部署使用的模型厂商、具体模型版本和 API Key？",
+      "reference": "不能确定。说明描述了对话模型和搭配模型两类调用，并指出两者可以共用底层模型，但未给出生产部署的厂商、具体版本或 API Key；应明确资料不足，不能猜测或编造凭据。",
+      "reference_outcome": "明确指出资料未说明所问的生产配置，不凭示例推断厂商或版本，不生成密钥。",
+      "source_file": "AI-Agent-工具调用与穿搭生成流程.md",
+      "source_type": "knowledge_file",
+      "source_section": "九、工具结果如何回到对话模型",
+      "kind": "insufficient_evidence"
+    }
+  ]
+}

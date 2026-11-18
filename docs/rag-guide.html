@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>研伴 RepoPilot · RAG 代码阅读指南</title>
+  <style>
+    :root{color-scheme:light;--ink:#22272a;--muted:#586267;--line:#dce2e3;--green:#17674e;--cyan:#17738b;--red:#ae3939;--paper:#fff;--soft:#f3f6f6}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:30px}body{margin:0;font:15px/1.8 system-ui,-apple-system,"Microsoft YaHei",sans-serif;color:var(--ink);background:var(--paper);letter-spacing:0}a{color:var(--green);text-underline-offset:3px}button,select,input{font:inherit}button,select{min-height:38px}button{cursor:pointer;border:1px solid var(--line);border-radius:5px;padding:4px 12px;background:white;color:var(--ink)}button:hover{background:var(--soft)}button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #71b8c4;outline-offset:3px}button:disabled{opacity:.4;cursor:default}select{border:1px solid var(--line);border-radius:4px;background:white;padding:5px 8px;max-width:100%;color:var(--ink)}code{font:13px/1.65 Consolas,monospace;background:#eff3f3;padding:1px 4px;overflow-wrap:anywhere}pre{font:13px/1.8 Consolas,"Microsoft YaHei",monospace;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:2;margin:0}h1{font-size:30px;line-height:1.35;font-weight:650;margin:8px 0 18px}h2{font-size:23px;line-height:1.5;margin:0 0 16px}h3{font-size:17px;line-height:1.6;margin:22px 0 9px}p{margin:10px 0}small,.muted{color:var(--muted);font-size:13px}strong{font-weight:650}ul,ol{padding-left:24px}li{margin:7px 0}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:12px 13px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-weight:600;background:var(--soft)}td code{font-size:12px}details{border-top:1px solid var(--line);padding:12px 0}summary{cursor:pointer;font-weight:600}summary:focus-visible{outline:2px solid var(--cyan)}
+    .layout{display:grid;grid-template-columns:225px minmax(0,1fr);max-width:1360px;margin:auto}.sidebar{position:sticky;top:0;height:100vh;padding:30px 20px;border-right:1px solid var(--line);overflow:auto}.brand{font-size:18px;font-weight:700}.sidebar p{margin:2px 0 25px}.sidebar nav{display:grid;gap:4px}.sidebar nav a{padding:6px 9px;text-decoration:none;color:var(--muted);border-left:2px solid transparent}.sidebar nav a:hover{color:var(--green);border-color:var(--green);background:var(--soft)}main{padding:36px 44px 60px;min-width:0}.intro{border-bottom:1px solid var(--line);padding-bottom:24px}.eyebrow{font-size:12px;font-weight:650;color:var(--green)}section{padding:32px 0;border-bottom:1px solid var(--line)}.callout{border-left:3px solid var(--green);background:#f0f7f4;padding:10px 16px;margin:18px 0}.warning{border-color:var(--red);background:#fcf3f3}.table-wrap{overflow-x:auto}.table-wrap table{min-width:620px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:22px}.pair>*{min-width:0}.band{background:var(--soft);padding:18px;margin:15px 0}.band pre{color:#24424a}.tool{border:1px solid var(--line);border-radius:6px;padding:20px;margin-top:18px}.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}.tabs button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:white}.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.icon{width:40px;height:38px;padding:0;flex:none;font-size:18px}.counter{font:13px Consolas,monospace;width:70px;text-align:center}.progress{height:4px;background:#e6ecec;margin:18px 0;overflow:hidden}.progress span{display:block;background:var(--cyan);height:100%;transition:width .35s}.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:18px}.step{position:relative;min-height:88px;min-width:0;text-align:left;display:flex;align-items:flex-start;gap:8px;font-size:13px;padding:9px;background:var(--soft);border-color:transparent}.step b{font:12px Consolas,monospace;color:var(--muted);min-width:18px}.step[aria-current="step"]{background:#eef7f3;border-color:var(--green);color:var(--green)}.step.done b{color:var(--green)}.step span{overflow-wrap:anywhere}.stage-detail{border-top:1px solid var(--line);padding-top:15px;min-height:175px}.stage-detail h3{margin:0 0 8px}.stage-detail code{display:block;line-height:1.6;background:none;padding:0;color:var(--cyan)}.stage-detail p{margin-bottom:0}.data-map{display:grid;grid-template-columns:1fr 36px 1fr;gap:12px;align-items:center}.storage{border-top:3px solid var(--cyan);padding:12px 0}.storage:last-child{border-color:var(--green)}.bridge{text-align:center;font-size:22px;color:var(--muted)}.source-controls{display:flex;gap:14px;flex-wrap:wrap;align-items:end;margin:15px 0}.source-controls label{display:grid;gap:4px;font-size:13px}.explorer{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}.source-pane{min-width:0}.source-text{background:var(--soft);padding:15px;max-height:560px;overflow-y:auto}.chunks{display:grid;gap:12px;min-width:0}.chunk{border:1px solid var(--line);border-radius:5px;overflow:hidden}.chunk-head{padding:9px 13px;background:#f1f7f5;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px;font-size:13px}.chunk-meta{display:flex;flex-wrap:wrap;gap:5px 14px;font-size:12px;padding:8px 13px;color:var(--muted);border-bottom:1px solid var(--line);overflow-wrap:anywhere}.chunk pre{padding:13px}.chunk details{margin:0 13px;font-size:12px;font-weight:400}.chunk summary{font-weight:400}.chunk details pre{padding:7px 0}.score-row{display:grid;grid-template-columns:180px minmax(0,1fr) 50px;align-items:center;gap:12px;margin:16px 0}.score-row input{width:100%;accent-color:var(--cyan)}.score-row output{font-family:Consolas,monospace;text-align:right}.score-result{display:flex;align-items:center;flex-wrap:wrap;gap:18px;border-top:1px solid var(--line);padding-top:15px}.score-result output{font:32px/1.3 Consolas,monospace;color:var(--green)}.meter{height:8px;background:#e6ecec;width:100%;margin-top:12px}.meter span{display:block;background:var(--green);height:100%;transition:width .15s}.recipe{display:grid;grid-template-columns:50px minmax(0,1fr);gap:14px;margin:18px 0}.recipe>b{font:24px Consolas,monospace;color:var(--cyan)}.recipe p{margin:0}.recipe code{display:block;width:fit-content;margin-top:7px}.footer{margin-top:20px;color:var(--muted);font-size:12px}
+    @media(max-width:1000px){main{padding:28px}.layout{grid-template-columns:195px minmax(0,1fr)}.steps{grid-template-columns:repeat(3,minmax(0,1fr))}.pair,.explorer{grid-template-columns:1fr}.source-text{max-height:330px}}
+    @media(max-width:700px){.layout{display:block}.sidebar{position:static;height:auto;padding:18px;border-right:0;border-bottom:1px solid var(--line)}.sidebar p{margin-bottom:12px}.sidebar nav{display:flex;flex-wrap:wrap;gap:0}.sidebar nav a{font-size:12px;padding:4px 7px}.brand{font-size:16px}main{padding:22px 18px}h1{font-size:26px}h2{font-size:21px}section{padding:27px 0}.tool{padding:14px}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.step{min-height:80px}.stage-detail{min-height:240px}.score-row{grid-template-columns:1fr 48px;gap:6px}.score-row label{grid-column:1/-1}.source-controls{display:grid;grid-template-columns:1fr}.data-map{grid-template-columns:1fr}.bridge{transform:rotate(90deg);height:30px}.table-wrap table{min-width:580px}.recipe{grid-template-columns:32px minmax(0,1fr);gap:8px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+    @media print{.sidebar,.toolbar,.tabs,.source-controls{display:none}.layout{display:block}main{padding:0}.tool,.chunk{break-inside:avoid}.source-text{max-height:none}.steps{grid-template-columns:repeat(4,1fr)}a{color:inherit}.intro,section{padding:15px 0}}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">研伴 RepoPilot</div><p class="muted">RAG · 给 Java 开发者的阅读指南</p>
+    <nav aria-label="章节目录">
+      <a href="#overview">01 先建立整体概念</a><a href="#flow">02 写入与检索流程</a><a href="#sources">03 哪些数据进入 RAG</a><a href="#cleaning">04 文档清洗与提取</a><a href="#chunking">05 切片策略与真实示例</a><a href="#retrieval">06 检索与打分逻辑</a><a href="#answer">07 压缩、门控与回答</a><a href="#java">08 Java / Spring AI 对照</a><a href="#reading">09 代码阅读与排查</a>
+    </nav>
+  </aside>
+  <main>
+    <header class="intro">
+      <div class="eyebrow">源码解读 · 2026-10-03</div>
+      <h1>研伴 RepoPilot 的 RAG，实际怎样运行？</h1>
+      <p>可以把它理解成一套手写的 Spring 服务：先把项目知识整理成 <code>Document</code>，再做向量与关键词检索，最后把证据放进提示词回答。核心检索流程并不是 LangChain 自动提供的。</p>
+      <p class="muted">依据当前项目源码整理。示例不是你数据库里的真实数据；默认参数也不代表当前运行配置。此页可离线打开，配套示例数据在同目录的 rag-chunk-examples.js。</p>
+    </header>
+
+    <section id="overview">
+      <h2>01 · 先分清：存知识、找知识、用知识</h2>
+      <div class="band"><pre>写入：原始资料 → 文本提取 → 结构切片 → Embedding → SQL + Milvus
+检索：用户问题 → 查询向量 + 关键词 → 候选 → 重排 → 证据片段
+回答：问题 + 证据片段 → 提示词 → 生成模型 → 带引用的回答</pre></div>
+      <p><strong>Embedding</strong> 类似把文本变成固定长度的 <code>float[]</code>，相近含义尽量靠近；它不是生成答案的模型。<strong>RAG 也不是训练模型</strong>，只是给本次请求补充外部资料。</p>
+      <div class="data-map" aria-label="关系库与向量库的职责">
+        <div class="storage"><strong>关系库：正文与业务事实</strong><p><code>documents</code> 保存正文、标题、来源和 metadata；<code>knowledge_source_documents</code> 保存上传文件的状态与统计。项目默认 PostgreSQL，测试等场景也能用 SQLite。</p></div>
+        <div class="bridge" aria-hidden="true">⇄</div>
+        <div class="storage"><strong>Milvus：相似度检索</strong><p>保存向量、仓库标识、来源和文本副本；用 COSINE + AUTOINDEX。<code>Document</code> 实体本身没有 embedding 字段。</p></div>
+      </div>
+      <div class="callout warning">数据库中存在 Document，不等于已经进入 Milvus，也不等于允许进入 RAG。SQL 和 Milvus 没有跨库原子事务，SQL 回滚不能自动撤销向量写入。</div>
+    </section>
+
+    <section id="flow">
+      <h2>02 · 三条流程，不能混为一谈</h2>
+      <p>“上传文档”“独立 RAG 问答”“聊天 Agent 搜索工具”共享部分函数，但编排不同。下方每一步都对应真实代码；动画只演示调用顺序，不发请求、不写数据库。</p>
+      <div class="tool">
+        <div class="tabs" role="tablist" aria-label="流程模式">
+          <button role="tab" aria-selected="true" data-mode="upload">文档上传</button>
+          <button role="tab" aria-selected="false" data-mode="ask">完整检索 / 问答</button>
+          <button role="tab" aria-selected="false" data-mode="chat">聊天工具检索</button>
+        </div>
+        <div class="toolbar">
+          <button class="icon" id="play" title="播放流程" aria-label="播放流程">&#9654;</button>
+          <button class="icon" id="previous" title="上一步" aria-label="上一步">&#8592;</button>
+          <button class="icon" id="next" title="下一步" aria-label="下一步">&#8594;</button>
+          <button class="icon" id="reset" title="从头开始" aria-label="从头开始">&#8634;</button>
+          <span class="counter" id="counter"></span><span class="muted" id="flow-caption"></span>
+        </div>
+        <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+        <div class="steps" id="steps"></div>
+        <div class="stage-detail" id="stage-detail" aria-live="polite"></div>
+      </div>
+      <h3>还有一条批量重建路径</h3>
+      <p><code>POST /api/rag/{repo_id}/reindex</code> → <code>qa.reindex_documents</code>：从<strong>本地业务表</strong>刷新 Issue、PR、失败 CI 文档，选出允许 RAG 的 Document，分批算向量，删除该仓库旧 Milvus 数据并重新写入。</p>
+      <p>GitHub 同步负责把远端资料写进业务表，不自动执行 RAG 重建。重建复用已有上传 / 项目文档切片，<strong>不会重新读取原文件或按新参数切片</strong>。新上传管理的 retry 才会重新解析、切片；项目文档要重新扫描。</p>
+    </section>
+
+    <section id="sources">
+      <h2>03 · 究竟哪些数据会写入 RAG？</h2>
+      <p><code>source_policy.py</code> 的白名单只有下面六类。“允许向量化”是资格，是否已经写入还取决于索引入口与处理状态。</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>source_type</th><th>实际正文</th><th>构建 / 写入时机</th><th>切片方式</th></tr></thead>
+        <tbody>
+          <tr><td><code>issue</code></td><td>Issue 标题 + body；不包含 Issue 评论</td><td>reindex 从本地 Issue 表构建</td><td>整条作为一个 Document</td></tr>
+          <tr><td><code>pull_request</code></td><td>标题 + body + Review 评论的路径、行、作者与正文。改动文件名放 metadata，<strong>不把 patch / diff 正文拼进来</strong></td><td>reindex 从本地 PR / Review 表构建</td><td>整条作为一个 Document</td></tr>
+          <tr><td><code>workflow_run</code></td><td>失败 CI 的非空日志；先专门脱敏，再截断</td><td>reindex 从本地 WorkflowRun 表构建</td><td>最多 48,000 字符，8,000 字符一片，最多 6 片，无 overlap；再附名称</td></tr>
+          <tr><td><code>project_doc</code></td><td>仓库中指定的 Markdown：README、ARCHITECTURE、CONTRIBUTING、docs/、ADR、变更记录、Issue 模板等</td><td>项目扫描先写 SQL / Evidence，<strong>reindex 才同步 Milvus</strong></td><td>结构切片，固定 1800 / 180 字符</td></tr>
+          <tr><td><code>knowledge_file</code></td><td>用户上传文件提取后的文本</td><td>新上传后台处理；旧上传在请求内处理；均写 SQL + Milvus</td><td>按格式；新入口用仓库配置，旧入口固定 1800 / 180</td></tr>
+          <tr><td><code>memory_note</code></td><td>人工新增笔记，或用户批准的长期记忆候选</td><td>创建笔记 / 批准候选时写入</td><td>全文一条；不是所有聊天内容自动入库</td></tr>
+        </tbody>
+      </table></div>
+      <h3>这些不走 RAG 向量库</h3>
+      <p><code>project_overview</code>、<code>project_manifest</code>、团队成员、周报、会话 / 对话 / 线程记忆等走业务表、记忆接口或工作区工具直接查询。<code>code_file</code> 不在白名单，向量库写入还会明确拒绝它；源码主要走工作区实时搜索。</p>
+      <p>所以不能因为项目有 <code>chunk_code_text</code>、<code>chunk_pr_files</code> 函数，就认为源码或 PR diff 正在进入当前 RAG 主链路。<code>KnowledgeSourceDocument.source_type = upload_file</code> 是上传管理记录；检索用的 Document 类型是 <code>knowledge_file</code>。</p>
+      <details><summary>项目扫描的筛选限制</summary><p>先按路径 / 文件类型分类，再应用 <code>.devflow/index.yml</code> 的 auto / allowlist 和 include / exclude；include 不能把任意源码改成 project_doc。跳过秘密文件、生成目录等；最多发现 500 个文件，读取单个文本最多 400,000 字节，检查 NUL 并尝试字符编码。项目概况和依赖清单即使以 Document 存储，仍为 direct。</p></details>
+    </section>
+
+    <section id="cleaning">
+      <h2>04 · 当前“清洗”，实际做了什么？</h2>
+      <p>这里的主策略是<strong>格式提取 + 基础规范化 + 安全 / 资源限制</strong>，不是一套完整的智能文档清洗流水线。核心函数是 <code>extract_document_text</code> 和 <code>chunk_document</code>。</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>输入</th><th>代码实际处理</th><th>未覆盖的能力 / 注意点</th></tr></thead>
+        <tbody>
+          <tr><td>TXT / MD / JSON / CSV 等文本</td><td>拒绝开头 8192 字节中的 NUL；尝试 utf-8-sig → utf-8 → gb18030 → latin-1；切片时 CRLF / CR 转 LF，去边缘空白</td><td>编码兜底不保证准确；不是全文去噪或秘密扫描</td></tr>
+          <tr><td>PDF</td><td>pypdf 读取已有文本层，各页 strip；加入 <code>&lt;!-- page: N --&gt;</code>，空文本页略过</td><td>没有 OCR；图片扫描 PDF 可能无法索引。没有通用页眉页脚清除或阅读顺序修复</td></tr>
+          <tr><td>DOCX</td><td>python-docx 按正文顺序提取：标题变 Markdown #；列表变简单标记；表格变管道文本，首行当表头</td><td>不恢复 Word 真实分页，不读图片文字或页眉页脚；复杂排版仅简化为文本</td></tr>
+          <tr><td>失败 CI 日志</td><td>专门用正则遮蔽私钥、GitHub / AWS token、JWT、Bearer、add-mask 及 secret / token / password 等赋值</td><td>是 CI 专用逻辑，<strong>不能推断上传文档也有相同脱敏</strong></td></tr>
+        </tbody>
+      </table></div>
+      <div class="pair">
+        <div><h3>防止文件处理失控</h3><p>上传上限 12 MiB；提取文本最多 400 万字符；PDF 最多 500 页；DOCX 最多 10,000 个 ZIP 条目、64 MiB 解压内容，拒绝加密条目；切片总量最多 5,000。</p></div>
+        <div><h3>三种“去重”，不是一回事</h3><p>新上传入口按仓库 + 文件字节 SHA256 查重（排除 failed 记录）；已有切片重试按来源替换；查询时再用文本指纹 / Jaccard 做近重复候选去重。没有全库语义文档去重。</p></div>
+      </div>
+      <div class="callout warning">当前没有统一的页眉页脚去除、模板噪声过滤、图片 OCR、上传文件全面脱敏，或基于 LLM 的语义切片。不要把提取 / 切片等同于已经“洗干净”。</div>
+    </section>
+
+    <section id="chunking">
+      <h2>05 · 切片是按字符 + 结构，不是按 token</h2>
+      <p><code>max_chars / chunk_size</code> 和 <code>overlap / chunk_overlap</code> 都是<strong>字符数</strong>。例如汉字通常算一个字符；与 Spring AI 的 token splitter 不能直接按相同数字比较。</p>
+      <div class="table-wrap"><table><thead><tr><th>入口</th><th>size / overlap</th><th>是否读仓库配置？</th></tr></thead><tbody>
+        <tr><td>新 /api/rag 上传、retry</td><td>配置初始默认 800 / 100</td><td>是</td></tr><tr><td>旧 /api/repos/{id}/knowledge/upload</td><td>固定 1800 / 180</td><td>否</td></tr><tr><td>项目文档扫描</td><td>固定 1800 / 180</td><td>否</td></tr><tr><td>直接调用 chunk_document 未传参数</td><td>函数默认 1600 / 160</td><td>函数不负责查库</td></tr><tr><td>Issue / PR / memory_note / CI</td><td>见上面的来源表</td><td>不是普通上传的切片路径</td></tr>
+      </tbody></table></div>
+      <p class="muted">配置接口约束：size 200～4000，overlap 0～1000，且 overlap &lt; size。当前运行值需看仓库配置，不能只看函数定义。</p>
+      <details open><summary>TXT / LOG：字符滑动窗口</summary><p><code>_plain_chunks</code> 从 cursor 取最多 max_chars 字符；未到末尾时，在窗口后半段找最后的空行 / 换行，尽量在此结束，否则硬切。下一窗从 <code>max(cursor + 1, end - overlap)</code> 开始，因此既带重叠又保证前进。去首尾空白后，实际重复正文可能少于 overlap。</p></details>
+      <details open><summary>MD / PDF / DOCX：先拆结构块，再装箱</summary><p><code>_markdown_blocks</code> 用标题栈维护 #～######，用出现次数区别同名章节；空行结束段落，代码围栏独立成块，PDF 页标记更新 page。<code>_pack_blocks</code> 只合并同一章节实例、同一页的块。达到容量就发出切片，再尝试带上前片尾部。</p><p>每片补上章节路径 / Page 前缀，前缀也算在字符预算里，正文存在时前缀最多 512 字符且不超过总预算三分之一。长段落先按中英文句末 / 换行拆，长句还超限才硬切。代码围栏超长时按行拆，补围栏；极长单行也硬切。围栏不进入 overlap；跨章节 / 页码不重叠。实际 overlap 受句 / 词边界和剩余容量影响，不保证精确等于目标值。</p></details>
+      <details><summary>JSON / CSV：保留基本数据结构</summary><p>JSON 用 json.loads 解析并美化；小文件整块；大文件按顶层键或数组项生成块，长值再拆。没有递归到任意深度的语义分割；拆后的块不保证都是合法 JSON。解析失败则回退为普通文本块再装箱。</p><p>CSV 用 csv.reader 解析，尽量按完整记录装箱，每片重复表头，重叠按整条记录选取，所以可能超出 overlap 目标。超长表头单独分片；巨型行按字符分片并加 row_part 等信息。含单元格内换行时，精确物理行定位可能为空，不应把 row_start 当绝对文件行号。</p></details>
+
+      <h3>实际切片结果</h3>
+      <p>以下不是浏览器里模仿的分割器：使用当前项目 <code>chunk_document</code> 预先生成。选择格式与参数，观察片数、重复标题、页边界与正文。PDF 示例是提取后文本的模拟输入。</p>
+      <div class="source-controls">
+        <label>示例格式<select id="sample" aria-label="示例格式"></select></label>
+        <label>字符参数<select id="preset" aria-label="字符参数"></select></label>
+        <span id="chunk-count" class="muted" aria-live="polite"></span>
+      </div>
+      <p class="callout" id="sample-note"></p>
+      <div class="explorer">
+        <div class="source-pane"><h3>传给切片器的原文</h3><pre class="source-text" id="source-text"></pre></div>
+        <div><h3>生成的片段</h3><div class="chunks" id="chunks"></div></div>
+      </div>
+      <p><code>parent_id</code> 是章节实例 / 页等的分组 ID；<code>child_index</code> 是组内顺序；<code>chunk_id</code> 标识具体切片。它们存在 metadata 中，<strong>不是另建了一张“父文档全文”表</strong>。start_line / end_line 指向提取后文本，不一定是原始二进制文档的视觉位置。</p>
+    </section>
+
+    <section id="retrieval">
+      <h2>06 · 检索不是“查一次向量库就结束”</h2>
+      <p>底层入口 <code>search_similar_documents</code> 支持 vector / fulltext / hybrid，其中 fulltext 是关键词模式。先限定仓库、RAG 来源白名单与 metadata 条件；Milvus 的仓库 / 来源条件在查询时使用，其他 metadata 条件多在向量召回后过滤。</p>
+      <div class="pair">
+        <div><h3>向量路：含义接近</h3><p>问题用与入库相同 provider / model / dimensions 的模型编码，Milvus 按 COSINE 找候选。默认设置为本地 <code>Qwen/Qwen3-Embedding-0.6B</code>、1024 维；本地查询编码用 query prompt。也有兼容 API、DashScope、显式 deterministic 等实现。</p><p>向量空间合同必须一致；不会静默补零 / 截短，也不会在模型加载失败后偷偷切换成 deterministic。默认配置不是运行实况。</p></div>
+        <div><h3>关键词路：名称匹配</h3><p>从 SQL 读取当前仓库的 Document，在 Python 内存里计算加权 BM25，K1=1.5、B=0.75。标题权重 4、路径 3、符号 4.5、标签 2.5、正文 1。英文取词 / 标识符，中文取单字和相邻双字。</p><p>它不是 Elasticsearch、数据库全文索引或现成 LangChain BM25Retriever。分批读库，但语料统计仍在内存累积。</p></div>
+      </div>
+      <h3>合并、去重、限制占位</h3>
+      <p>各路分数先除以本路最大值做相对归一化，再按 chunk_id（没有则按文档 id）合并。hybrid 使用下面的加权公式，<strong>不是 RRF，也不是相关性的概率</strong>。同 parent / 来源内，正文指纹或词集合 Jaccard ≥ 0.9 视为近重复；每个 parent 最多保留 2 条候选，防止一个长章节霸占结果。</p>
+      <div class="tool">
+        <h3 style="margin-top:0">融合分数演示</h3>
+        <p class="muted">滑块表示已归一化的候选分数；设为 0 表示该路无有效命中。只计算 hybrid 融合，不模拟后续重排、门控或最终阈值。</p>
+        <div class="score-row"><label for="vector-score">向量分数 V</label><input id="vector-score" type="range" min="0" max="1" step="0.01" value="0.8"><output id="vector-value" for="vector-score">0.80</output></div>
+        <div class="score-row"><label for="keyword-score">关键词分数 K</label><input id="keyword-score" type="range" min="0" max="1" step="0.01" value="0.5"><output id="keyword-value" for="keyword-score">0.50</output></div>
+        <div class="score-result"><output id="fusion-score" for="vector-score keyword-score" aria-live="polite"></output><div><code>min(1, 0.62 × V + 0.30 × K + bonus)</code><p class="muted" id="bonus"></p></div></div>
+        <div class="meter" aria-hidden="true"><span id="score-meter"></span></div>
+      </div>
+      <h3>完整编排增加的步骤</h3>
+      <p><code>retrieve_knowledge</code> 为重排先取 20～100 条候选：<code>min(max(K × (重排开启 ? 8 : 2), 20), 100)</code>。底层每路再取 <code>min(max(limit × 8, 40), 200)</code>，所以 TopK 不等于最初召回数。</p>
+      <p>开启重排时优先用配置的 Qwen API，未配置或失败则用本地启发式；本地规则看关键词覆盖、标题 / 路径匹配、新鲜度等，默认重点重排前 24 条。然后截 TopK，再从 SQL 补同一 parent 的前后相邻各 1 片，并检查来源、仓库与存在的 branch / commit / version / checksum 等字段，避免混版本。补的是兄弟片段的上下文，不是加载全部父文档。</p>
+      <p>接着按最终 score 过滤，默认启用 0.8 阈值。这个分数可能已经被融合 / 重排改写，<strong>不等于原始 cosine=0.8</strong>。配置 TopK 初始值 3，而 ask/search 请求 schema 默认 5，会覆盖配置；最终限制在 1～20。</p>
+      <details><summary>向量服务不可用，会怎样？</summary><p>底层 hybrid 捕获 MilvusUnavailableError 后可以继续 BM25；纯 vector 抛错。但完整入口在底层召回前已计算查询向量，embedding 失败并不保证能自动降级为关键词搜索。这里也不是把所有服务异常都吞掉。</p></details>
+    </section>
+
+    <section id="answer">
+      <h2>07 · 查到以后，怎样变成答案？</h2>
+      <div class="recipe"><b>1</b><div><p><strong>压缩证据，不是再次切片入库。</strong>从正文中抽取与问题相关的句子，最多约 4 句，每条最多约 260 token。总预算为 min(1800, max(520, K × 260))。中文按字符、英文约 4 字符一个 token 估算，并非精确模型 tokenizer。最终去掉内部 _raw_content。</p><code>context_compression.compress_retrieval_results</code></div></div>
+      <div class="recipe"><b>2</b><div><p><strong>规则门控判断是否应该回答。</strong>没有证据、关键名称缺失等返回 insufficient_evidence；至少两条 score ≥ 0.6 的片段出现规则识别的正反标记冲突时返回 conflict；指代不明确时返回 ask_clarification；其余为 answer。不是另一个大模型在判卷，也不能保证识别所有自然语言矛盾。</p><code>answer_gate.evaluate_answer_gate</code></div></div>
+      <div class="recipe"><b>3</b><div><p><strong>只把选中的片段放进提示词。</strong>qa 将编号片段放入 &lt;knowledge&gt;，要求只依据证据、引用 [n]，并把资料看作不可信输入，不能执行里面的指令。门控不允许 answer，就不调用生成模型。</p><code>qa.answer_question → _context_message → LLMClient</code></div></div>
+      <div class="recipe"><b>4</b><div><p><strong>有条件的摘录兜底。</strong>生成未启用 / 缺少配置或模型返回空文本时，改为从来源摘出相关原句。这里没有捕获所有 chat API 异常，不能理解成“任何模型失败都能兜底”。search 与 retrieval-tests 只返回检索结果和诊断，不生成答案。</p><code>qa.extractive_answer</code></div></div>
+      <div class="callout">聊天 Agent 的 _semantic_search 直接调用底层 search_similar_documents，通常有本地重排与压缩，但没有上述完整服务的 Qwen 编排、相邻片扩展、配置阈值与规则门控。Agent 可以改写问题或再次调用工具，因此聊天效果不能直接等同于 /ask 测试结果。</div>
+      <h3>存储副本有长度差异</h3>
+      <p>Milvus 字段默认限制：标题 500 字节、正文 8192 个 UTF-8 字节、metadata 4096 字节，写入时可能裁剪。SQL 保留完整正文。因此没有普通切片的长 Issue / PR、CI 日志或笔记，向量检索得到的文本副本可能短于 SQL 关键词路。字符数与 UTF-8 字节数也不是一个单位。</p>
+    </section>
+
+    <section id="java">
+      <h2>08 · 用你熟悉的 Java / Spring AI 理解</h2>
+      <div class="table-wrap"><table><thead><tr><th>本项目</th><th>熟悉的对应物</th><th>区别</th></tr></thead><tbody>
+        <tr><td>FastAPI router / Depends(get_db)</td><td>@RestController / 参数依赖注入</td><td>入口是函数，不一定是一整个 Controller 类</td></tr><tr><td>SQLAlchemy Session / Document</td><td>JPA EntityManager / Entity</td><td>此处 Document 是数据库实体，不是 LangChain Document</td></tr><tr><td>extract_document_text</td><td>DocumentReader</td><td>返回字符串，结构定位后续生成</td></tr><tr><td>chunk_document</td><td>自定义 DocumentTransformer / TextSplitter</td><td>按字符和结构，不直接采用 token splitter</td></tr><tr><td>embed_knowledge_documents / query</td><td>EmbeddingModel</td><td>入库与查询必须保持同一向量合同</td></tr><tr><td>upsert_milvus_documents</td><td>VectorStore.add(...) / upsert</td><td>本项目手动管理 Milvus 与 SQL 双存储</td></tr><tr><td>retrieve_knowledge</td><td>@Service 编排多个 Retriever / PostProcessor</td><td>Python 自定义融合、重排、扩展、压缩与门控</td></tr><tr><td>qa._context_message + LLMClient</td><td>检索增强 Advisor + ChatModel</td><td>生成是独立步骤，不是向量模型在回答</td></tr><tr><td>ChatAgent 中 LangChain tools</td><td>工具调用 / ToolCallback</td><td>主要组织 Agent、消息与工具，不是 RAG 核心算法来源</td></tr><tr><td>BackgroundTasks / asyncio.to_thread</td><td>进程内后台任务 / 线程池任务</td><td>不是独立消息队列，不具备持久任务投递语义</td></tr>
+      </tbody></table></div>
+      <details><summary>读 Python 时，先认这几种写法就够了</summary><div class="band"><pre>def f(...):                 # 普通方法；缩进界定代码块
+async def f(...): await g() # 异步方法；await 等待异步结果，不等于自动开启线程
+list[dict[str, Any]]        # 类似 List&lt;Map&lt;String, Object&gt;&gt;
+item.get("page")            # 类似 map.get("page")，缺少时返回 None
+items[:top_k]               # 类似 subList(0, min(top_k, size))
+[x for x in items if ...]   # 类似 stream().filter(...).toList()
+{**old, "score": value}     # 浅拷贝 Map 后覆盖 score
+@dataclass                  # 类似自动生成构造器的 DTO；不是数据库 Entity
+return items, trace, ms     # 返回 tuple，可类比封装三个字段的 Java record</pre></div></details>
+    </section>
+
+    <section id="reading">
+      <h2>09 · 建议从这些位置开始读</h2>
+      <p>代码中已补充中文注释，尤其标出单位、来源边界、双存储与两套检索入口。下列路径均从项目根目录起算。</p>
+      <ol>
+        <li><code>backend/app/services/rag/source_policy.py</code>：先看 RAG_SOURCE_TYPES，建立“什么可检索”的边界。</li>
+        <li><code>backend/app/api/routes/rag.py</code> → <code>document_processing.py</code>：看新上传、后台状态与处理编排。</li>
+        <li><code>backend/app/services/rag/document_extraction.py</code> → <code>chunking.py</code>：看格式提取与切片，重点是 chunk_document、_markdown_blocks、_pack_blocks、_plain_chunks。</li>
+        <li><code>backend/app/services/rag/indexing.py</code> → <code>embeddings.py</code> → <code>vector_store.py</code>：看 Issue / PR / CI 如何变成正文、向量合同与 Milvus 写入。</li>
+        <li><code>backend/app/services/rag/knowledge_base.py</code> → <code>retrieval.py</code> → <code>rerank.py</code>：先看完整编排，再深入底层打分。</li>
+        <li><code>backend/app/services/context_compression.py</code>、<code>rag/answer_gate.py</code>、<code>rag/qa.py</code>：看证据如何被限制、何时允许回答，以及 reindex 做什么。</li>
+        <li><code>backend/app/services/project_indexing.py</code>、<code>memory_hub.py</code>、<code>api/routes/knowledge.py</code>、<code>api/routes/chat.py</code>：确认项目扫描、笔记、旧上传与聊天路径的差异。</li>
+      </ol>
+      <h3>常见问题，先看哪里？</h3>
+      <div class="table-wrap"><table><thead><tr><th>现象</th><th>先检查</th></tr></thead><tbody>
+        <tr><td>GitHub 同步了，RAG 仍没有资料</td><td>同步只写业务表；是否执行 reindex？</td></tr><tr><td>项目扫描了，向量检索没有结果</td><td>扫描只写 SQL / Evidence；是否 reindex？hybrid 的关键词路可能已经能搜到。</td></tr><tr><td>改了 chunk_size，片数没变</td><td>参数只影响下一次新上传 / retry；reindex 不重新切片；旧上传与项目扫描另有固定值。</td></tr><tr><td>扫描 PDF 返回空内容</td><td>是否只有图片？当前没有 OCR。</td></tr><tr><td>有候选，却最终无证据 / 不回答</td><td>查看 trace.pipeline 的阶段数量、最终阈值、压缩预算及 answer_gate。</td></tr><tr><td>embedding 报错或维度不匹配</td><td>provider / model / dimensions 与全局向量合同是否一致？不要换模型却复用旧向量。</td></tr><tr><td>聊天和独立问答结果不同</td><td>是否走同一个入口？Agent 是否改写 / 重试了 query？</td></tr>
+      </tbody></table></div>
+      <p class="callout warning">本次讲的是“代码允许哪些数据、什么时候写入”，没有查询当前运行数据库或 Milvus，因此不代表已经审计了你当前库里的实际数据清单。</p>
+    </section>
+    <footer class="footer">研伴 RepoPilot · 根据当前源码整理 · 本页不依赖网络，不调用模型，不修改项目数据。</footer>
+  </main>
+</div>
+<script src="rag-chunk-examples.js"></script>
+<script>
+  'use strict';
+  const flows = {
+    upload:{caption:'POST /api/rag/repositories/{repo_id}/documents',steps:[
+      ['校验与查重','api/routes/rag.py · upload_document','限制文件大小与扩展名，清理文件名；按当前仓库 + 文件字节 SHA256 查已有非失败记录。相同内容不重复创建。'],
+      ['落盘 / queued','upload_document → BackgroundTasks','保存原文件与 KnowledgeSourceDocument；返回 202。进程内后台任务随后处理，不是独立消息队列。'],
+      ['parsing：提取','document_processing.py → extract_document_text','读取文件；PDF 取文本层并加页标记，DOCX 转简化 Markdown，文本文件尝试解码。'],
+      ['splitting：切片','chunk_document(text, size, overlap)','取仓库配置（初始默认 800 / 100 字符），按格式与结构拆开，保留章节 / 页 / 行 / 父子 ID。'],
+      ['embedding：编码','_embed_in_batches → embed_knowledge_documents','将每片标题 + 正文转成向量，处理器每批最多 64 片；本地模型内部还有自己的编码批次。模型不是生成答案。'],
+      ['替换来源切片','SQLAlchemy · Document','为此文件构造 knowledge_file Document；重试先替换该来源旧片。正文和 metadata 放关系库。'],
+      ['写向量 / completed','upsert_milvus_documents → db.commit','同步 Milvus 后完成提交与统计；状态完成。双库不是一个原子事务，任何失败进入 failed，不能靠 SQL rollback 撤销向量写入。']
+    ]},
+    ask:{caption:'search / retrieval-tests → retrieve_knowledge；ask 还生成回答',steps:[
+      ['配置与查询向量','knowledge_base.py · retrieve_knowledge','读取仓库配置及请求覆盖项，约束 TopK；vector / hybrid 先编码问题。fulltext（关键词）模式无需查询向量。'],
+      ['双路召回','retrieval.py · search_similar_documents','Milvus COSINE + SQL 文档的自定义 BM25，带仓库、来源白名单及 metadata 条件；底层此时关闭重排与压缩。'],
+      ['融合与去重','_merge_candidates / _deduplicate_candidates','各路相对归一化；hybrid 加权融合；同范围近重复移除，限制每个 parent 的候选占位。'],
+      ['重排 / TopK','_qwen_rerank / rerank_documents','根据配置重排；Qwen API 不可用时采用本地启发式。截出 TopK，最终分数不一定是原始 COSINE。'],
+      ['邻片上下文','expand_parent_context(neighbor_window=1)','从 SQL 找同 parent 前后各一片，检查仓库、来源与现有版本字段；不是加载全文父文档。'],
+      ['阈值过滤','score_threshold','按重排后的 score 过滤；配置初始默认开启 0.8。截 TopK 后再过滤，最终条数可能更少。'],
+      ['抽取式压缩','compress_retrieval_results','按问题抽取相关句子；每条约 260 token，总预算按 K 计算且不超过 1800。是查询时处理，不改变入库切片。'],
+      ['规则门控','evaluate_answer_gate','检查不足、名称匹配、冲突与指代。search / retrieval-tests 在这里返回结果与 trace，不调用生成模型。'],
+      ['ask 生成回答','qa.answer_question → LLMClient','只在允许回答时把证据编号加入提示词；要求引用 [n]。未启用或空回复可摘录原句，但不是所有 API 异常都有兜底。']
+    ]},
+    chat:{caption:'api/routes/chat.py · _semantic_search 的工具调用路径',steps:[
+      ['Agent 决定搜索','ChatAgent → 语义搜索工具','LangChain 用于组织消息和工具调用；Agent 根据当前问题选择搜索 query，也可能改写 query 或重复调用。'],
+      ['底层召回','_semantic_search → search_similar_documents','直接进入底层，而不是 retrieve_knowledge。共享来源白名单、仓库隔离与向量 / BM25 召回。'],
+      ['融合 / 去重','retrieval.py','hybrid 加权融合并去重、限制 parent 占位；这部分与完整服务共享。'],
+      ['本地处理 / 返回','本地 rerank + context_compression','默认有本地重排与压缩；不经过完整服务的 Qwen 重排编排、相邻片扩展、配置阈值与规则门控。工具结果返回给 Agent，不在这个函数直接生成最终回答。']
+    ]}
+  };
+  let mode='upload',index=0,timer=null;
+  const byId=id=>document.getElementById(id);
+  function stop(){if(timer!==null)clearInterval(timer);timer=null;byId('play').innerHTML='&#9654;';byId('play').setAttribute('aria-label','播放流程');byId('play').title='播放流程';}
+  function renderFlow(){
+    const flow=flows[mode],steps=byId('steps');steps.replaceChildren();
+    flow.steps.forEach((step,i)=>{const b=document.createElement('button');b.className='step'+(i<index?' done':'');b.setAttribute('aria-label','第 '+(i+1)+' 步：'+step[0]);if(i===index)b.setAttribute('aria-current','step');const n=document.createElement('b');n.textContent=String(i+1).padStart(2,'0');const t=document.createElement('span');t.textContent=step[0];b.append(n,t);b.onclick=()=>{stop();index=i;renderFlow();};steps.append(b);});
+    const item=flow.steps[index],detail=byId('stage-detail');detail.replaceChildren();const h=document.createElement('h3');h.textContent=item[0];const c=document.createElement('code');c.textContent=item[1];const p=document.createElement('p');p.textContent=item[2];detail.append(h,c,p);
+    byId('counter').textContent=(index+1)+' / '+flow.steps.length;byId('flow-caption').textContent=flow.caption;byId('progress').style.width=((index+1)/flow.steps.length*100)+'%';byId('previous').disabled=index===0;byId('next').disabled=index===flow.steps.length-1;
+  }
+  const modeButtons=[...document.querySelectorAll('[data-mode]')];
+  modeButtons.forEach((b,i)=>{b.onclick=()=>{stop();mode=b.dataset.mode;index=0;modeButtons.forEach(x=>x.setAttribute('aria-selected',String(x===b)));renderFlow();};b.onkeydown=e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+modeButtons.length)%modeButtons.length;modeButtons[n].focus();modeButtons[n].click();}};});
+  byId('next').onclick=()=>{stop();index=Math.min(index+1,flows[mode].steps.length-1);renderFlow();};byId('previous').onclick=()=>{stop();index=Math.max(0,index-1);renderFlow();};byId('reset').onclick=()=>{stop();index=0;renderFlow();};
+  byId('play').onclick=()=>{if(timer!==null){stop();return;}if(index===flows[mode].steps.length-1){index=0;renderFlow();}byId('play').innerHTML='&#10074;&#10074;';byId('play').setAttribute('aria-label','暂停流程');byId('play').title='暂停流程';timer=setInterval(()=>{if(index<flows[mode].steps.length-1){index++;renderFlow();}if(index===flows[mode].steps.length-1)stop();},2400);};
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});renderFlow();
+
+  function renderSamples(){
+    const data=window.RAG_CHUNK_EXAMPLES;if(!data){byId('sample-note').textContent='示例数据未加载，请确认 rag-chunk-examples.js 与本页位于同一目录。';return;}
+    data.samples.forEach(s=>byId('sample').add(new Option(s.name,s.id)));data.presets.forEach(p=>byId('preset').add(new Option('size '+p.size+' / overlap '+p.overlap,p.id)));byId('preset').value='400-60';
+    function update(){
+      const sample=data.samples.find(s=>s.id===byId('sample').value),results=sample.results[byId('preset').value];byId('source-text').textContent=sample.text;byId('sample-note').textContent=sample.note;byId('chunk-count').textContent='原文 '+[...sample.text].length+' 字符 → '+results.length+' 片';byId('chunks').replaceChildren();
+      results.forEach((chunk,i)=>{
+        const article=document.createElement('article');article.className='chunk';const head=document.createElement('div');head.className='chunk-head';const title=document.createElement('strong');title.textContent='片段 '+(i+1);const size=document.createElement('span');size.textContent=[...chunk.content].length+' 字符 · '+chunk.chunk_type;head.append(title,size);
+        const meta=document.createElement('div');meta.className='chunk-meta';['章节：'+(chunk.section_path.length?chunk.section_path.join(' / '):'—'),'页：'+(chunk.page??'—'),'行：'+(chunk.start_line??'?')+'–'+(chunk.end_line??'?'),'组内序号：'+chunk.child_index].forEach(t=>{const span=document.createElement('span');span.textContent=t;meta.append(span);});const pre=document.createElement('pre');pre.textContent=chunk.content;
+        const details=document.createElement('details'),summary=document.createElement('summary'),metadata=document.createElement('pre');summary.textContent='完整 metadata';const {content,...rest}=chunk;metadata.textContent=JSON.stringify(rest,null,2);details.append(summary,metadata);article.append(head,meta,pre,details);byId('chunks').append(article);
+      });
+    }
+    byId('sample').onchange=update;byId('preset').onchange=update;update();
+  }
+  renderSamples();
+  function score(){const v=Number(byId('vector-score').value),k=Number(byId('keyword-score').value),bonus=v>0&&k>0?.08:0,result=Math.min(1,.62*v+.30*k+bonus);byId('vector-value').textContent=v.toFixed(2);byId('keyword-value').textContent=k.toFixed(2);byId('fusion-score').textContent=result.toFixed(4);byId('bonus').textContent=bonus?'两路均有效命中：bonus = 0.08':'只有一路或均无有效命中：bonus = 0';byId('score-meter').style.width=result*100+'%';}
+  byId('vector-score').oninput=score;byId('keyword-score').oninput=score;score();
+</script>
+</body>
+</html>
